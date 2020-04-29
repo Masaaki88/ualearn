@@ -35,21 +35,27 @@ def read_word_pairs(words_file_name):
 
 
 def run_questions(word_pairs):
-    pairs_to_ask = list(range(len(word_pairs)))
+    n_all_pairs = len(word_pairs)
+    pairs_to_ask = list(range(n_all_pairs))
 
-    print('\nUebersetze folgende Woerter:')
+    print('\nTranslate the following words:')
     while pairs_to_ask:
-        index = sample(pairs_to_ask, 1)[0]
-        pair = word_pairs[index]
-        print(f'\n{pair.ukrainian}')
-        answer = input()
-        if answer == pair.german:
-            print('Korrekt!')
-            pair.n_correct += 1
-            pairs_to_ask.remove(index)
-        else:
-            print(f'Falsch. Die richtige Uebersetzung lautet: {pair.german}')
-        pair.n_asked += 1
+        try:
+            n_remaining = len(pairs_to_ask)
+            index = sample(pairs_to_ask, 1)[0]
+            pair = word_pairs[index]
+            print(f'\n{pair.ukrainian}')
+            answer = input()
+            if answer == pair.german:
+                print(f'Correct! {n_remaining-1} to go.')
+                pair.n_correct += 1
+                pairs_to_ask.remove(index)
+            else:
+                print(f'Incorrect. The correct answer is: {pair.german}. ')
+            pair.n_asked += 1
+        except KeyboardInterrupt:
+            print('\nStopping session.')
+            break
     print('')
     return word_pairs
 
