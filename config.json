@@ -1,0 +1,10 @@
+{
+    "vocabularies": [
+        {
+            "identifier": "words",
+            "query": "Translate the following words:",
+            "query_index": 0,
+            "response_index": 1
+        }
+    ]
+}

@@ -1,6 +1,9 @@
 import json
 from dataclasses import dataclass, asdict
 from random import sample
+from pprint import pformat
+
+import config
 
 
 @dataclass
@@ -12,13 +15,36 @@ class WordPair:
     n_asked: int = 0
 
 
+@dataclass
+class Vocabulary:
+    query: str
+    query_index: int
+    response_index: int
+
+
 def main():
     words_file_name = 'data/words.json'
     stats_file_name = 'data/word_stats.json'
-    
+
+    load_config()
     word_pairs = read_word_pairs(words_file_name)
     result_word_pairs = run_questions(word_pairs)
     write_results(result_word_pairs, stats_file_name)
+
+
+def load_config():
+    print(f'Loading config file {config_file_name}.')
+    with open(config_file_name, 'r', encoding='utf-8') as inputfile:
+        config_content = json.load(inputfile)
+    config.vocabularies = {
+        vocabulary['identifier']: Vocabulary(
+            query=vocabulary['query'],
+            query_index=vocabulary['query_index'],
+            response_index=vocabulary['response_index'],
+        )
+        for vocabulary in config_content['vocabularies']
+    }
+    print(f'Loaded configuration: {pformat(config.vocabularies)}.')
 
 
 def read_word_pairs(words_file_name):
