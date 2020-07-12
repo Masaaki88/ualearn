@@ -1,18 +1,10 @@
 import json
-from dataclasses import dataclass, asdict
-from random import sample
+from dataclasses import asdict
 from pprint import pformat
 
 import config
-
-
-@dataclass
-class WordPair:
-    index: int
-    query_word: str
-    response_word: str
-    n_correct: int = 0
-    n_asked: int = 0
+from loading import read_word_pairs
+from interaction import run_questions
 
 
 def main():
@@ -35,51 +27,6 @@ def load_config(config_file_name):
     config.query_index = config_content['query_index']
     config.response_index = config_content['response_index']
     print(f'Loaded configuration.')
-
-
-def read_word_pairs():
-    words_file_name = f'data/{config.word_list_id}.json'
-    print(f'Reading {words_file_name}.')
-    with open(words_file_name, 'r', encoding='utf-8') as inputfile:
-        raw_word_pairs = json.load(inputfile)    
-    print(f'Read {len(raw_word_pairs)} items.')
-
-    word_pairs = [
-        WordPair(
-            index=i_pair,
-            query_word=raw_pair[config.query_index],
-            response_word=raw_pair[config.response_index]
-        )
-        for i_pair, raw_pair in enumerate(raw_word_pairs)
-    ]
-    return word_pairs
-
-
-def run_questions(word_pairs):
-    n_all_pairs = len(word_pairs)
-    pairs_to_ask = list(range(n_all_pairs))
-
-    print(config.query)
-    while pairs_to_ask:
-        try:
-            n_remaining = len(pairs_to_ask)
-            index = sample(pairs_to_ask, 1)[0]
-            pair = word_pairs[index]
-            print(f'\n{pair.query_word}')
-            answer = input()
-            if answer == pair.response_word:
-                print(f'Correct! {n_remaining-1} to go.')
-                pair.n_correct += 1
-                if pair.n_correct > pair.n_asked:
-                    pairs_to_ask.remove(index)
-            else:
-                print(f'Incorrect. The correct answer is: {pair.response_word}. ')
-            pair.n_asked += 1
-        except KeyboardInterrupt:
-            print('\nStopping session.')
-            break
-    print('')
-    return word_pairs
 
 
 def write_results(result_word_pairs):
