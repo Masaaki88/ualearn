@@ -18,7 +18,7 @@ def run_questions(word_pairs):
             if answer == pair.response_word:
                 print(f'Correct! {n_remaining-1} to go.')
                 pair.n_correct += 1
-                if pair.n_correct > (pair.n_asked - 1):
+                if pair.n_correct > (pair.n_asked - pair.n_correct):
                     pairs_to_ask.remove(index)
             else:
                 print(f'Incorrect. The correct answer is: {pair.response_word}. ')
